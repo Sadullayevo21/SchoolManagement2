@@ -3,6 +3,8 @@
 ## 📖 About
 SchoolManagement — bu C# Console Application bo‘lib, o‘quvchilar ma'lumotlarini boshqarish uchun yaratilgan loyiha.
 
+![Logo](gifs/photo_2026-06-10_19-45-07.jpg)
+
 ## ✨ Features
 - O‘quvchi qo‘shish
 - Barcha o‘quvchilarni ko‘rish
