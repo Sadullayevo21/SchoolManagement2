@@ -30,6 +30,8 @@ do
     Console.WriteLine("14. O'quvchilarni sonini bilish");
     Console.WriteLine("15. Ko'p o'quvchilar qo'shish");
     Console.WriteLine("16. O'quvchilarni sahifalarda ko'rish");
+    Console.WriteLine("17. Eng aqlli o'quvchini ko'rish");
+    Console.WriteLine("17. Eng yosh o'quvchini ko'rish");
     Console.WriteLine("0. Chiqish");
     Console.Write("Tanlovingizni kiriting: ");
     
@@ -84,6 +86,12 @@ do
             break;
         case "16":
             Spaginated();
+            break;
+        case "17":
+            Sclever();
+            break;
+        case "18":
+            Syoungest();
             break;
         case "0":
             Exit();
@@ -421,6 +429,39 @@ do
         }
 
         
+        Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
+        Console.ReadKey();
+    }
+
+    void Sclever()
+    {
+        Dictionary<int, Student> allStudents = studentService.GetAllStudents();
+
+        var cleverStudent = allStudents.FindFirstOrDefaultCleverStudent();
+
+        if (cleverStudent != null)
+        {
+            Console.WriteLine($"Eng aqlli o'quvchi: {cleverStudent.FirstName} {cleverStudent.LastName}, Bahosi: {cleverStudent.Grade}");
+        }
+        else
+        {
+            Console.WriteLine("O'quvchilar ro'yxati bo'sh!");
+        }
+
+        Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
+        Console.ReadKey();
+    }
+
+    void Syoungest()
+    {
+        Dictionary<int, Student> allStudents = studentService.GetAllStudents();
+
+        var youngestStudent = allStudents.FindFirstOrDefaultYoungestStudent();
+        if (youngestStudent != null)
+        {
+            Console.WriteLine($"Eng yosh o'quvchi: {youngestStudent.FirstName}, Yoshi: {youngestStudent.Age}");
+        }
+
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
     }

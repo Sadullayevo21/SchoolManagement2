@@ -17,7 +17,9 @@ public class StudentService : IStudentService
                     Id = Guid.NewGuid(),
                     FirstName = "Omadjon",
                     LastName = "Ismoilov",
-                    Address = "Toshkent"
+                    Address = "Toshkent",
+                    Grade = 4,
+                    Age = 20 // Yoshi qo'shildi
                 }
             },
             {
@@ -26,7 +28,9 @@ public class StudentService : IStudentService
                     Id = Guid.Parse("3dc2988f-4345-4266-88d0-36f9bc121ff0"),
                     FirstName = "Akbar",
                     LastName = "Aliyev",
-                    Address = "Toshkent"
+                    Address = "Toshkent",
+                    Grade = 5,
+                    Age = 18 
                 }
             },
             {
@@ -35,7 +39,9 @@ public class StudentService : IStudentService
                     Id = Guid.Parse("a4437ee1-2703-435d-a0ad-ba69c537b6b2"),
                     FirstName = "Ahmad",
                     LastName = "Inomov",
-                    Address = "Toshkent"
+                    Address = "Toshkent",
+                    Grade = 3,
+                    Age = 22 
                 }
             }
         };
@@ -125,6 +131,6 @@ public class StudentService : IStudentService
 
     public IEnumerable<KeyValuePair<int, Student>> GetPaginatedStudents(int page, int pageSize)
     {
-        return students.Skip((page -1) * pageSize).Take(pageSize);
+        return students.Paginate(page, pageSize);
     }
 }
