@@ -27,11 +27,4 @@ public static class StudentsExtension
         var minAge = studentDict.Values.Min(s => s.Age);
         return studentDict.Values.FirstOrDefault(s => s.Age == minAge);
     }
-
-    public static IEnumerable<T> Paginate<T>(this IEnumerable<T> collection, int pageNumber, int pageSize)
-    {
-        if (collection == null) return Enumerable.Empty<T>();
-
-        return collection.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-    }
 }
