@@ -1,57 +1,73 @@
 using Models.Teachers;
+using SchoolManagement2.Repositories.TeacherRepositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Services.TeacherFile;
 
 public class TeacherService : ITeacherService
 {
-    private Dictionary<int, Teacher> teachers;   
-    private int count = 0;
+    private readonly TeacherRepository _teacherRepository;
 
     public TeacherService()
     {
-        teachers = new Dictionary<int, Teacher>()
-        {
-            {
-                1, new Teacher
-                {
-                    Id = Guid.NewGuid(),
-                    FirstName = "Azizbek",
-                    LastName = "Salimov",
-                    Address = "Toshkent"
-                }
-            },
-            {
-                2, new Teacher
-                {
-                    Id = Guid.Parse("3bc86ae4-c475-4355-9b97-2cd8ed52eece"),
-                    FirstName = "Nodir",
-                    LastName = "Odilov",
-                    Address = "Toshkent"
-                }
-            },
-            {
-                3, new Teacher
-                {
-                    Id = Guid.Parse("95413238-8c7c-413b-83aa-6e513c88b4df"),
-                    FirstName = "Abror",
-                    LastName = "Orifov",
-                    Address = "Toshkent"
-                }
-            }
-        };
-    }
+        _teacherRepository = new TeacherRepository();
 
-    private int IndexOfDictionary = 4;
+        if (!_teacherRepository.GetAll().Any())
+        {
+            _teacherRepository.Create(new Teacher
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Azizbek",
+                LastName = "Salimov",
+                Address = "Toshkent"
+            });
+            _teacherRepository.Create(new Teacher
+            {
+                Id = Guid.Parse("3bc86ae4-c475-4355-9b97-2cd8ed52eece"),
+                FirstName = "Nodir",
+                LastName = "Odilov",
+                Address = "Toshkent"
+            });
+            _teacherRepository.Create(new Teacher
+            {
+                Id = Guid.Parse("95413238-8c7c-413b-83aa-6e513c88b4df"),
+                FirstName = "Abror",
+                LastName = "Orifov",
+                Address = "Toshkent"
+            });
+        }
+    }
 
     public void CreateTeacher(Teacher teacher)
     {
-        teachers.Add(IndexOfDictionary, teacher);
-        IndexOfDictionary++;
+        if (teacher.Id == Guid.Empty)
+        {
+            teacher.Id = Guid.NewGuid();
+        }
+        _teacherRepository.Create(teacher);
     }
 
     public Dictionary<int, Teacher> GetAllTeachers()
     {
-        return this.teachers;
+        int index = 1;
+        return _teacherRepository.GetAll().ToDictionary(teacher => index++, teacher => teacher);
+    }
+
+    public Teacher GetTeacherById(Guid teacherId)
+    {
+        return _teacherRepository.GetAll().FirstOrDefault(teacher => teacher.Id == teacherId);
+    }
+
+    public void UpdateTeacher(Teacher teacher)
+    {
+        _teacherRepository.Update(teacher => teacher.Id == teacher.Id, teacher);
+    }
+
+    public void DeleteTeacherById(Guid teacherId)
+    {
+        _teacherRepository.Delete(teacher => teacher.Id == teacherId);
     }
 
     public void PrintTeacher(Teacher teacher)
@@ -60,64 +76,27 @@ public class TeacherService : ITeacherService
         Console.WriteLine(
         $"""
         Teacher Info:
+            Id: {teacher.Id}
             First name: {teacher.FirstName}
             Last name: {teacher.LastName}
             Adress: {teacher.Address}
         """
         );
     }
-    
-    public void DeleteTeacherById(Guid teacherId)
-    {
-        foreach(var teacher in teachers)
-        {
-            if(teacher.Value.Id == teacherId)
-            {
-                teachers.Remove(teacher.Key);
-                return;
-            }
-        }
-    }
-
-    public Teacher GetTeacherById(Guid teacherId)
-    {
-        foreach(var teacher in teachers)
-        {
-            if (teacher.Value.Id == teacherId)
-            {
-                return teacher.Value;
-            }
-        }
-
-        return null;
-    }
-
-    public void UpdateTeacher(Teacher teacher)
-    {
-       foreach(var newTeacher in teachers)
-        {
-            if(newTeacher.Value.Id == teacher.Id)
-            {
-                teachers.Remove(newTeacher.Key);
-                teachers.Add(newTeacher.Key, teacher);
-                return;
-            }
-        }
-    }
 
     public IEnumerable<KeyValuePair<int, Teacher>> GetTeacherByName(string name)
     {
-        return teachers.Where(teacher =>  teacher.Value.FirstName == name);
+        return GetAllTeachers().Where(teacher => teacher.Value.FirstName.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
     public int GetTeachersCount()
     {
-        return teachers.Count();
+        return _teacherRepository.GetAll().Count();
     }
 
     public void AddTeacherRange(params Teacher[] teachers)
     {
-        foreach(var teacher in teachers)
+        foreach (var teacher in teachers)
         {
             CreateTeacher(teacher);
         }
@@ -125,6 +104,6 @@ public class TeacherService : ITeacherService
 
     public IEnumerable<KeyValuePair<int, Teacher>> GetPaginatedTeachers(int page, int pageSize)
     {
-        return teachers.Skip((page -1) * pageSize).Take(pageSize);
+        return GetAllTeachers().Skip((page - 1) * pageSize).Take(pageSize);
     }
 }
