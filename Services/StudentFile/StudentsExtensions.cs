@@ -6,25 +6,25 @@ namespace Services.StudentFile;
 
 public static class StudentsExtension
 {
-    public static Student FindFirstOrDefaultCleverStudent(this Dictionary<int, Student> studentDict)
+    public static Student FindFirstOrDefaultCleverStudent(this IEnumerable<Student> studentDict)
     {
         if (studentDict == null || !studentDict.Any())
         {
             return null;
         }
 
-        var maxGrade = studentDict.Values.Max(s => s.Grade);
-        return studentDict.Values.FirstOrDefault(s => s.Grade == maxGrade);
+        var maxGrade = studentDict.Max(student => student.Grade);
+        return studentDict.FirstOrDefault(student => student.Grade == maxGrade);
     }
 
-    public static Student FindFirstOrDefaultYoungestStudent(this Dictionary<int, Student> studentDict)
+    public static Student FindFirstOrDefaultYoungestStudent(this IEnumerable<Student> studentDict)
     {
         if (studentDict == null || !studentDict.Any())
         {
             return null;
         }
 
-        var minAge = studentDict.Values.Min(s => s.Age);
-        return studentDict.Values.FirstOrDefault(s => s.Age == minAge);
+        var minAge = studentDict.Min(student => student.Age);
+        return studentDict.FirstOrDefault(student => student.Age == minAge);
     }
 }

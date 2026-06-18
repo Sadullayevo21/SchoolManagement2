@@ -5,13 +5,13 @@ namespace Services.StudentFile;
 public interface IStudentService
 {
     void CreateStudent(Student student);
-    Dictionary<int, Student> GetAllStudents();
+    IEnumerable<Student> GetAllStudents();
     void PrintStudent(Student student);
     Student GetStudentById(Guid studentId);
-    void UpdateStudent(Student student);
-    void DeleteStudentById(Guid studentId);
-    IEnumerable<KeyValuePair<int, Student>> GetStudentByName(string name);
+    bool UpdateStudent(Student student);
+    bool DeleteStudentById(Guid studentId);
+    IEnumerable<Student> GetStudentByName(string name);
     int GetStudentsCount();
     void AddStudentRange(params Student[] students);
-    IEnumerable<KeyValuePair<int, Student>> GetPaginatedStudents(int page, int pageSize);
+    IEnumerable<Student> GetPaginatedStudents(int page, int pageSize);
 }

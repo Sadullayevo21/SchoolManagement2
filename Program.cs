@@ -31,7 +31,7 @@ do
     Console.WriteLine("15. Ko'p o'quvchilar qo'shish");
     Console.WriteLine("16. O'quvchilarni sahifalarda ko'rish");
     Console.WriteLine("17. Eng aqlli o'quvchini ko'rish");
-    Console.WriteLine("17. Eng yosh o'quvchini ko'rish");
+    Console.WriteLine("18. Eng yosh o'quvchini ko'rish");
     Console.WriteLine("0. Chiqish");
     Console.Write("Tanlovingizni kiriting: ");
     
@@ -103,12 +103,12 @@ do
 
     void List()
     {
-        Dictionary<int, Teacher> teachers = teacherService.GetAllTeachers();
+         IEnumerable<Teacher> teachers = teacherService.GetAllTeachers();
         
         Console.WriteLine("\n*** Barcha Ustozlar Ro'yxati ***");
         foreach (var teacher in teachers)
         {
-            teacherService.PrintTeacher(teacher.Value);
+            teacherService.PrintTeacher(teacher);
         }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
@@ -154,7 +154,15 @@ do
         Console.Write("Adressni kiriting: ");
         teacher.Address = Console.ReadLine();
 
-        teacherService.UpdateTeacher(teacher);
+        var isupdated = teacherService.UpdateTeacher(teacher);
+        if (isupdated)
+        {
+            Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
+        }
+        else
+        {
+            Console.WriteLine($"\n{teacher.FirstName} yangilanmadi!");
+        }
 
         
         Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
@@ -169,9 +177,15 @@ do
 
         Guid teacherId = Guid.Parse(Console.ReadLine());
 
-        teacherService.DeleteTeacherById(teacherId); 
-
-        Console.WriteLine($"\n{teacherId} muvaffaqiyatli o'chirildi!");
+        var isdeleted = teacherService.DeleteTeacherById(teacherId);
+        if (isdeleted)
+        {
+            Console.WriteLine($"\n{teacherId} muvaffaqiyatli o'chirildi!");
+        }
+        else
+        {
+            Console.WriteLine($"\n{teacherId} o'chirilmadi!");
+        }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -186,10 +200,10 @@ do
 
         foreach(var teacher in teachers)
         {
-            Console.WriteLine(teacher.Value.Id);
-            Console.WriteLine(teacher.Value.FirstName);
-            Console.WriteLine(teacher.Value.LastName);
-            Console.WriteLine(teacher.Value.Address);
+            Console.WriteLine(teacher.Id);
+            Console.WriteLine(teacher.FirstName);
+            Console.WriteLine(teacher.LastName);
+            Console.WriteLine(teacher.Address);
         }
 
         
@@ -257,10 +271,10 @@ do
 
         foreach(var teacher in teachers)
         {
-            Console.WriteLine(teacher.Value.Id);
-            Console.WriteLine(teacher.Value.FirstName);
-            Console.WriteLine(teacher.Value.LastName);
-            Console.WriteLine(teacher.Value.Address);
+            Console.WriteLine(teacher.Id);
+            Console.WriteLine(teacher.FirstName);
+            Console.WriteLine(teacher.LastName);
+            Console.WriteLine(teacher.Address);
         }
 
         
@@ -270,12 +284,12 @@ do
 
     void Slist()
     {
-        Dictionary<int, Student> students = studentService.GetAllStudents();
+        IEnumerable<Student> students = studentService.GetAllStudents();
         
         Console.WriteLine("\n*** Barcha O'quvchilar Ro'yxati ***");
         foreach (var student in students)
         {
-            studentService.PrintStudent(student.Value);
+            studentService.PrintStudent(student);
         }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
@@ -321,9 +335,15 @@ do
         Console.Write("Adressni kiriting: ");
         student.Address = Console.ReadLine();
 
-        studentService.UpdateStudent(student);
-
-        Console.WriteLine($"\n{student.FirstName} muvaffaqiyatli yangilandi!");
+        var isupdated = studentService.UpdateStudent(student);
+        if (isupdated)
+        {
+            Console.WriteLine($"\n{student.FirstName} muvaffaqiyatli yangilandi!");
+        }
+        else
+        {
+            Console.WriteLine($"\n{student.FirstName} yangilanmadi!");
+        }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -335,9 +355,15 @@ do
         
         Guid studentId = Guid.Parse(Console.ReadLine());
 
-        studentService.DeleteStudentById(studentId);
-
-        Console.WriteLine($"\n{studentId} muvaffaqiyatli o'chirildi!");
+        var isdeleted = studentService.DeleteStudentById(studentId);
+        if (isdeleted)
+        {
+            Console.WriteLine($"\n{studentId} muvaffaqiyatli o'chirildi!");
+        }
+        else
+        {
+            Console.WriteLine($"\n{studentId} o'chirilmadi!");
+        }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -352,10 +378,10 @@ do
 
         foreach(var student in students)
         {
-            Console.WriteLine(student.Value.Id);
-            Console.WriteLine(student.Value.FirstName);
-            Console.WriteLine(student.Value.LastName);
-            Console.WriteLine(student.Value.Address);
+            Console.WriteLine(student.Id);
+            Console.WriteLine(student.FirstName);
+            Console.WriteLine(student.LastName);
+            Console.WriteLine(student.Address);
         }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
@@ -422,10 +448,10 @@ do
 
         foreach(var student in students)
         {
-            Console.WriteLine(student.Value.Id);
-            Console.WriteLine(student.Value.FirstName);
-            Console.WriteLine(student.Value.LastName);
-            Console.WriteLine(student.Value.Address);
+            Console.WriteLine(student.Id);
+            Console.WriteLine(student.FirstName);
+            Console.WriteLine(student.LastName);
+            Console.WriteLine(student.Address);
         }
 
         
@@ -435,7 +461,7 @@ do
 
     void Sclever()
     {
-        Dictionary<int, Student> allStudents = studentService.GetAllStudents();
+        IEnumerable<Student> allStudents = studentService.GetAllStudents();
 
         var cleverStudent = allStudents.FindFirstOrDefaultCleverStudent();
 
@@ -454,7 +480,7 @@ do
 
     void Syoungest()
     {
-        Dictionary<int, Student> allStudents = studentService.GetAllStudents();
+        IEnumerable<Student> allStudents = studentService.GetAllStudents();
 
         var youngestStudent = allStudents.FindFirstOrDefaultYoungestStudent();
         if (youngestStudent != null)

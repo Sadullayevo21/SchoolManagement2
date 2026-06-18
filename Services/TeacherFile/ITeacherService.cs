@@ -5,13 +5,13 @@ namespace Services.TeacherFile;
 public interface ITeacherService
 {
     void CreateTeacher(Teacher teacher);
-    Dictionary<int, Teacher> GetAllTeachers();
+    IEnumerable<Teacher> GetAllTeachers();
     void PrintTeacher(Teacher teacher);
     Teacher GetTeacherById(Guid teacherId);
-    void UpdateTeacher(Teacher teacher);
-    void DeleteTeacherById(Guid teacherId);
-    IEnumerable<KeyValuePair<int, Teacher>> GetTeacherByName(string name);
+    bool UpdateTeacher(Teacher teacher);
+    bool DeleteTeacherById(Guid teacherId);
+     IEnumerable<Teacher> GetTeacherByName(string name);
     int GetTeachersCount();
     void AddTeacherRange(params Teacher[] teachers);
-    IEnumerable<KeyValuePair<int, Teacher>> GetPaginatedTeachers(int page, int pageSize);
+     IEnumerable<Teacher> GetPaginatedTeachers(int page, int pageSize);
 }

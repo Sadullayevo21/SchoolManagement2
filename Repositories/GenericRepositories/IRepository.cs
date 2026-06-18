@@ -1,9 +1,10 @@
-namespace SchoolManagement2.Repositories;
+namespace SchoolManagement2.Repositories.GenericRepositories;
 
 public interface IRepository<T> where T : class
 {
     void Create(T entity);
     IEnumerable<T> GetAll();
-    void Update(Func<T, bool> predicate, T updatedEntity);
-    void Delete(Func<T, bool> predicate);
+    T GetById(Guid id);
+    void Update(T entity);
+    void Delete(Guid id);
 }
