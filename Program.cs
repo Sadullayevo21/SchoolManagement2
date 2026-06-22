@@ -3,6 +3,7 @@ using Models.Students;
 using Models.Teachers;
 using Services.StudentFile;
 using Services.TeacherFile;
+using SchoolManagement2.Exeptions;
 
 ITeacherService teacherService = new TeacherService();
 IStudentService studentService = new StudentService(); 
@@ -103,13 +104,19 @@ do
 
     void List()
     {
-         IEnumerable<Teacher> teachers = teacherService.GetAllTeachers();
-        
-        Console.WriteLine("\n*** Barcha Ustozlar Ro'yxati ***");
-        foreach (var teacher in teachers)
+        try
         {
-            teacherService.PrintTeacher(teacher);
+            IEnumerable<Teacher> teachers = teacherService.GetAllTeachers();
+            
+            Console.WriteLine("\n*** Barcha Ustozlar Ro'yxati ***");
+            foreach (var teacher in teachers)
+            {
+                teacherService.PrintTeacher(teacher);
+            }
         }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -117,22 +124,28 @@ do
 
     void New()
     {
-        Console.WriteLine("\n*** Yangi ustoz qo'shish ***");
-        
-        var newTeacher = new Teacher();
+        try
+        {
+            Console.WriteLine("\n*** Yangi ustoz qo'shish ***");
+            
+            var newTeacher = new Teacher();
 
-        Console.Write("Ismini kiriting: ");
-        newTeacher.FirstName = Console.ReadLine();
+            Console.Write("Ismini kiriting: ");
+            newTeacher.FirstName = Console.ReadLine();
 
-        Console.Write("Familyasini kiriting: ");
-        newTeacher.LastName = Console.ReadLine();
+            Console.Write("Familyasini kiriting: ");
+            newTeacher.LastName = Console.ReadLine();
 
-        Console.Write("Manzilini kiriting: ");
-        newTeacher.Address = Console.ReadLine();
+            Console.Write("Manzilini kiriting: ");
+            newTeacher.Address = Console.ReadLine();
 
-        teacherService.CreateTeacher(newTeacher);
-        
-        Console.WriteLine($"\n{newTeacher.FirstName} muvaffaqiyatli qo'shildi!");
+            teacherService.CreateTeacher(newTeacher);
+            
+            Console.WriteLine($"\n{newTeacher.FirstName} muvaffaqiyatli qo'shildi!");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -140,32 +153,36 @@ do
 
     void Update()
     {
-        Teacher teacher = new Teacher();
-
-        Console.Write("Id ni kiriting: ");
-        teacher.Id = Guid.Parse(Console.ReadLine());
-
-        Console.Write("Ismini kiriting: ");
-        teacher.FirstName = Console.ReadLine();
-
-        Console.Write("Familiyani kiriting: ");
-        teacher.LastName = Console.ReadLine();
-
-        Console.Write("Adressni kiriting: ");
-        teacher.Address = Console.ReadLine();
-
-        var isupdated = teacherService.UpdateTeacher(teacher);
-        if (isupdated)
+        try
         {
-            Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
-        }
-        else
-        {
-            Console.WriteLine($"\n{teacher.FirstName} yangilanmadi!");
-        }
+            Teacher teacher = new Teacher();
 
+            Console.Write("Id ni kiriting: ");
+            teacher.Id = Guid.Parse(Console.ReadLine());
+
+            Console.Write("Ismini kiriting: ");
+            teacher.FirstName = Console.ReadLine();
+
+            Console.Write("Familiyani kiriting: ");
+            teacher.LastName = Console.ReadLine();
+
+            Console.Write("Adressni kiriting: ");
+            teacher.Address = Console.ReadLine();
+
+            var isupdated = teacherService.UpdateTeacher(teacher);
+            if (isupdated)
+            {
+                Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
+            }
+            else
+            {
+                Console.WriteLine($"\n{teacher.FirstName} yangilanmadi!");
+            }
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
-        Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -173,19 +190,25 @@ do
 
     void Delete()
     {
-        Console.Write("Teacher Id ni kiriting: ");
-
-        Guid teacherId = Guid.Parse(Console.ReadLine());
-
-        var isdeleted = teacherService.DeleteTeacherById(teacherId);
-        if (isdeleted)
+        try
         {
-            Console.WriteLine($"\n{teacherId} muvaffaqiyatli o'chirildi!");
+            Console.Write("Teacher Id ni kiriting: ");
+
+            Guid teacherId = Guid.Parse(Console.ReadLine());
+
+            var isdeleted = teacherService.DeleteTeacherById(teacherId);
+            if (isdeleted)
+            {
+                Console.WriteLine($"\n{teacherId} muvaffaqiyatli o'chirildi!");
+            }
+            else
+            {
+                Console.WriteLine($"\n{teacherId} o'chirilmadi!");
+            }
         }
-        else
-        {
-            Console.WriteLine($"\n{teacherId} o'chirilmadi!");
-        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -193,19 +216,24 @@ do
 
     void Name()
     {
-        Console.Write("Ustozni ismini kiriting: ");
-
-        string teacherFirstname = Console.ReadLine();
-        var teachers = teacherService.GetTeacherByName(teacherFirstname);
-
-        foreach(var teacher in teachers)
+        try
         {
-            Console.WriteLine(teacher.Id);
-            Console.WriteLine(teacher.FirstName);
-            Console.WriteLine(teacher.LastName);
-            Console.WriteLine(teacher.Address);
-        }
+            Console.Write("Ustozni ismini kiriting: ");
 
+            string teacherFirstname = Console.ReadLine();
+            var teachers = teacherService.GetTeacherByName(teacherFirstname);
+
+            foreach(var teacher in teachers)
+            {
+                Console.WriteLine(teacher.Id);
+                Console.WriteLine(teacher.FirstName);
+                Console.WriteLine(teacher.LastName);
+                Console.WriteLine(teacher.Address);
+            }
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -213,10 +241,14 @@ do
 
     void Count()
     {
-        int count = teacherService.GetTeachersCount();
-
-        Console.WriteLine($"Ustozlar soni: {count}");
-
+        try
+        {
+            int count = teacherService.GetTeachersCount();
+            Console.WriteLine($"Ustozlar soni: {count}");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -224,34 +256,39 @@ do
 
     void AddRange()
     {
-        Teacher[] teachers = 
-        [
-            new Teacher
-            {
-                Id = Guid.NewGuid(),
-                FirstName = "Asilbek",
-                LastName = "Uchqunov",
-                Address = "Toshkent"
-            },
-            new Teacher
-            {
-                Id = Guid.Parse("3bc86ae4-c475-4355-9b97-2cd8ed52eece"),
-                FirstName = "Muhammadrizo",
-                LastName = "Sodiqov",
-                Address = "Toshkent"
-            },
-            new Teacher
-            {
-                Id = Guid.Parse("95413238-8c7c-413b-83aa-6e513c88b4df"),
-                FirstName = "Mansur",
-                LastName = "Akbarovhh",
-                Address = "Toshkent"
-            }
-        ];
-        teacherService.AddTeacherRange(teachers);
+        try
+        {
+            Teacher[] teachers = 
+            [
+                new Teacher
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Asilbek",
+                    LastName = "Uchqunov",
+                    Address = "Toshkent"
+                },
+                new Teacher
+                {
+                    Id = Guid.Parse("3bc86ae4-c475-4355-9b97-2cd8ed52eece"),
+                    FirstName = "Muhammadrizo",
+                    LastName = "Sodiqov",
+                    Address = "Toshkent"
+                },
+                new Teacher
+                {
+                    Id = Guid.Parse("95413238-8c7c-413b-83aa-6e513c88b4df"),
+                    FirstName = "Mansur",
+                    LastName = "Akbarovhh",
+                    Address = "Toshkent"
+                }
+            ];
+            teacherService.AddTeacherRange(teachers);
 
-        Console.WriteLine("Ustozlar ma'lumotlari muvaffaqiyatli qo'shildi");
-
+            Console.WriteLine("Ustozlar ma'lumotlari muvaffaqiyatli qo'shildi");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -259,24 +296,27 @@ do
 
     void Paginated()
     {
-        Console.Write("Qaysi sahifadagi ma'lumotni kormoqchisiz: ");
-        
-        int page = Convert.ToInt32(Console.ReadLine());
-
-        Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
-
-        int pageSize = Convert.ToInt32(Console.ReadLine());
-        
-        var teachers = teacherService.GetPaginatedTeachers(page, pageSize);
-
-        foreach(var teacher in teachers)
+        try
         {
-            Console.WriteLine(teacher.Id);
-            Console.WriteLine(teacher.FirstName);
-            Console.WriteLine(teacher.LastName);
-            Console.WriteLine(teacher.Address);
-        }
+            Console.Write("Qaysi sahifadagi ma'lumotni kormoqchisiz: ");
+            int page = Convert.ToInt32(Console.ReadLine());
 
+            Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
+            int pageSize = Convert.ToInt32(Console.ReadLine());
+            
+            var teachers = teacherService.GetPaginatedTeachers(page, pageSize);
+
+            foreach(var teacher in teachers)
+            {
+                Console.WriteLine(teacher.Id);
+                Console.WriteLine(teacher.FirstName);
+                Console.WriteLine(teacher.LastName);
+                Console.WriteLine(teacher.Address);
+            }
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -284,13 +324,19 @@ do
 
     void Slist()
     {
-        IEnumerable<Student> students = studentService.GetAllStudents();
-        
-        Console.WriteLine("\n*** Barcha O'quvchilar Ro'yxati ***");
-        foreach (var student in students)
+        try
         {
-            studentService.PrintStudent(student);
+            IEnumerable<Student> students = studentService.GetAllStudents();
+            
+            Console.WriteLine("\n*** Barcha O'quvchilar Ro'yxati ***");
+            foreach (var student in students)
+            {
+                studentService.PrintStudent(student);
+            }
         }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -298,22 +344,28 @@ do
 
     void Snew()
     {
-        Console.WriteLine("\n*** Yangi o'quvchi qo'shish ***");
-        
-        var newStudent = new Student();
+        try
+        {
+            Console.WriteLine("\n*** Yangi o'quvchi qo'shish ***");
+            
+            var newStudent = new Student();
 
-        Console.Write("Ismini kiriting: ");
-        newStudent.FirstName = Console.ReadLine();
+            Console.Write("Ismini kiriting: ");
+            newStudent.FirstName = Console.ReadLine();
 
-        Console.Write("Familyasini kiriting: ");
-        newStudent.LastName = Console.ReadLine();
+            Console.Write("Familyasini kiriting: ");
+            newStudent.LastName = Console.ReadLine();
 
-        Console.Write("Manzilini kiriting: ");
-        newStudent.Address = Console.ReadLine();
+            Console.Write("Manzilini kiriting: ");
+            newStudent.Address = Console.ReadLine();
 
-        studentService.CreateStudent(newStudent);
-        
-        Console.WriteLine($"\n{newStudent.FirstName} muvaffaqiyatli qo'shildi!");
+            studentService.CreateStudent(newStudent);
+            
+            Console.WriteLine($"\n{newStudent.FirstName} muvaffaqiyatli qo'shildi!");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -321,29 +373,35 @@ do
 
     void Supdate()
     {
-        Student student = new Student();
-
-        Console.Write("Id ni kiriting: ");
-        student.Id = Guid.Parse(Console.ReadLine());
-
-        Console.Write("Ismni kiriting: ");
-        student.FirstName = Console.ReadLine();
-
-        Console.Write("Familiyani kiriting: ");
-        student.LastName = Console.ReadLine();
-
-        Console.Write("Adressni kiriting: ");
-        student.Address = Console.ReadLine();
-
-        var isupdated = studentService.UpdateStudent(student);
-        if (isupdated)
+        try
         {
-            Console.WriteLine($"\n{student.FirstName} muvaffaqiyatli yangilandi!");
+            Student student = new Student();
+
+            Console.Write("Id ni kiriting: ");
+            student.Id = Guid.Parse(Console.ReadLine());
+
+            Console.Write("Ismni kiriting: ");
+            student.FirstName = Console.ReadLine();
+
+            Console.Write("Familiyani kiriting: ");
+            student.LastName = Console.ReadLine();
+
+            Console.Write("Adressni kiriting: ");
+            student.Address = Console.ReadLine();
+
+            var isupdated = studentService.UpdateStudent(student);
+            if (isupdated)
+            {
+                Console.WriteLine($"\n{student.FirstName} muvaffaqiyatli yangilandi!");
+            }
+            else
+            {
+                Console.WriteLine($"\n{student.FirstName} yangilanmadi!");
+            }
         }
-        else
-        {
-            Console.WriteLine($"\n{student.FirstName} yangilanmadi!");
-        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -351,19 +409,24 @@ do
 
     void Sdelete()
     {
-        Console.Write("Id ni kiriting: ");
-        
-        Guid studentId = Guid.Parse(Console.ReadLine());
+        try
+        {
+            Console.Write("Id ni kiriting: ");
+            Guid studentId = Guid.Parse(Console.ReadLine());
 
-        var isdeleted = studentService.DeleteStudentById(studentId);
-        if (isdeleted)
-        {
-            Console.WriteLine($"\n{studentId} muvaffaqiyatli o'chirildi!");
+            var isdeleted = studentService.DeleteStudentById(studentId);
+            if (isdeleted)
+            {
+                Console.WriteLine($"\n{studentId} muvaffaqiyatli o'chirildi!");
+            }
+            else
+            {
+                Console.WriteLine($"\n{studentId} o'chirilmadi!");
+            }
         }
-        else
-        {
-            Console.WriteLine($"\n{studentId} o'chirilmadi!");
-        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -371,18 +434,24 @@ do
 
     void Sname()
     {
-        Console.Write("O'quvchi ismini kiriting: ");
-
-        string studentFirstname = Console.ReadLine();
-        var students = studentService.GetStudentByName(studentFirstname);
-
-        foreach(var student in students)
+        try
         {
-            Console.WriteLine(student.Id);
-            Console.WriteLine(student.FirstName);
-            Console.WriteLine(student.LastName);
-            Console.WriteLine(student.Address);
+            Console.Write("O'quvchi ismini kiriting: ");
+
+            string studentFirstname = Console.ReadLine();
+            var students = studentService.GetStudentByName(studentFirstname);
+
+            foreach(var student in students)
+            {
+                Console.WriteLine(student.Id);
+                Console.WriteLine(student.FirstName);
+                Console.WriteLine(student.LastName);
+                Console.WriteLine(student.Address);
+            }
         }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -390,10 +459,14 @@ do
 
     void Scount()
     {
-        int count = studentService.GetStudentsCount();
-
-        Console.WriteLine($"Studentlar soni: {count}");
-
+        try
+        {
+            int count = studentService.GetStudentsCount();
+            Console.WriteLine($"Studentlar soni: {count}");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -401,34 +474,39 @@ do
 
     void SAddRange()
     {
-        Student[] students = 
-        [
-            new Student
-            {
-                Id = Guid.NewGuid(),
-                FirstName = "Javohir",
-                LastName = "Sodiqov",
-                Address = "Toshkent"
-            },
-            new Student
-            {
-                Id = Guid.Parse("3dc2988f-4345-4266-88d0-36f9bc121ff0"),
-                FirstName = "Abubakir",
-                LastName = "Rahmonov",
-                Address = "Toshkent"
-            },
-            new Student
-            {
-                Id = Guid.Parse("a4437ee1-2703-435d-a0ad-ba69c537b6b2"),
-                FirstName = "Adham",
-                LastName = "Munavvarov",
-                Address = "Toshkent"
-            }
-        ];
-        studentService.AddStudentRange(students);
+        try
+        {
+            Student[] students = 
+            [
+                new Student
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = "Javohir",
+                    LastName = "Sodiqov",
+                    Address = "Toshkent"
+                },
+                new Student
+                {
+                    Id = Guid.Parse("3dc2988f-4345-4266-88d0-36f9bc121ff0"),
+                    FirstName = "Abubakir",
+                    LastName = "Rahmonov",
+                    Address = "Toshkent"
+                },
+                new Student
+                {
+                    Id = Guid.Parse("a4437ee1-2703-435d-a0ad-ba69c537b6b2"),
+                    FirstName = "Adham",
+                    LastName = "Munavvarov",
+                    Address = "Toshkent"
+                }
+            ];
+            studentService.AddStudentRange(students);
 
-        Console.WriteLine("O'quvchilar ma'lumotlari muvaffaqiyatli qo'shildi");
-
+            Console.WriteLine("O'quvchilar ma'lumotlari muvaffaqiyatli qo'shildi");
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -436,24 +514,27 @@ do
 
     void Spaginated()
     {
-        Console.Write("Qaysi sahifadagi ma'lumotni kormoqchisiz: ");
-        
-        int page = Convert.ToInt32(Console.ReadLine());
-
-        Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
-
-        int pageSize = Convert.ToInt32(Console.ReadLine());
-        
-        var students = studentService.GetPaginatedStudents(page, pageSize);
-
-        foreach(var student in students)
+        try
         {
-            Console.WriteLine(student.Id);
-            Console.WriteLine(student.FirstName);
-            Console.WriteLine(student.LastName);
-            Console.WriteLine(student.Address);
-        }
+            Console.Write("Qaysi sahifadagi ma'lumotni kormoqchisiz: ");
+            int page = Convert.ToInt32(Console.ReadLine());
 
+            Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
+            int pageSize = Convert.ToInt32(Console.ReadLine());
+            
+            var students = studentService.GetPaginatedStudents(page, pageSize);
+
+            foreach(var student in students)
+            {
+                Console.WriteLine(student.Id);
+                Console.WriteLine(student.FirstName);
+                Console.WriteLine(student.LastName);
+                Console.WriteLine(student.Address);
+            }
+        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
         
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -461,18 +542,23 @@ do
 
     void Sclever()
     {
-        IEnumerable<Student> allStudents = studentService.GetAllStudents();
-
-        var cleverStudent = allStudents.FindFirstOrDefaultCleverStudent();
-
-        if (cleverStudent != null)
+        try
         {
-            Console.WriteLine($"Eng aqlli o'quvchi: {cleverStudent.FirstName} {cleverStudent.LastName}, Bahosi: {cleverStudent.Grade}");
+            IEnumerable<Student> allStudents = studentService.GetAllStudents();
+            var cleverStudent = allStudents.FindFirstOrDefaultCleverStudent();
+
+            if (cleverStudent != null)
+            {
+                Console.WriteLine($"Eng aqlli o'quvchi: {cleverStudent.FirstName} {cleverStudent.LastName}");
+            }
+            else
+            {
+                Console.WriteLine("O'quvchilar ro'yxati bo'sh!");
+            }
         }
-        else
-        {
-            Console.WriteLine("O'quvchilar ro'yxati bo'sh!");
-        }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -480,13 +566,19 @@ do
 
     void Syoungest()
     {
-        IEnumerable<Student> allStudents = studentService.GetAllStudents();
-
-        var youngestStudent = allStudents.FindFirstOrDefaultYoungestStudent();
-        if (youngestStudent != null)
+        try
         {
-            Console.WriteLine($"Eng yosh o'quvchi: {youngestStudent.FirstName}, Yoshi: {youngestStudent.Age}");
+            IEnumerable<Student> allStudents = studentService.GetAllStudents();
+            var youngestStudent = allStudents.FindFirstOrDefaultYoungestStudent();
+            
+            if (youngestStudent != null)
+            {
+                Console.WriteLine($"Eng yosh o'quvchi: {youngestStudent.FirstName}");
+            }
         }
+        catch (ValidationException exception) { ShowError(exception.Message); }
+        catch (NotFoundException exception) { ShowError(exception.Message); }
+        catch (Exception exception) { Console.WriteLine(exception.Message); }
 
         Console.WriteLine("\nMenyoga qaytish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
@@ -501,6 +593,13 @@ do
     {
         Console.WriteLine("Noto'g'ri buyruq kiritdingiz. Davom etish uchun ixtiyoriy tugmani bosing...");
         Console.ReadKey();
+    }
+
+    void ShowError(string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\nXatolik yuz berdi: {message}");
+        Console.ResetColor();
     }
 
 } while (choice != "0");
