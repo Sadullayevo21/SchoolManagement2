@@ -102,11 +102,11 @@ do
             break;
     }
 
-    void List()
+    async Task List()
     {
         try
         {
-            IEnumerable<Teacher> teachers = teacherService.GetAllTeachers();
+            IEnumerable<Teacher> teachers = await teacherService.GetAllTeachersAsync();
             
             Console.WriteLine("\n*** Barcha Ustozlar Ro'yxati ***");
             foreach (var teacher in teachers)
@@ -122,7 +122,7 @@ do
         Console.ReadKey();
     }
 
-    void New()
+    async Task New()
     {
         try
         {
@@ -139,7 +139,7 @@ do
             Console.Write("Manzilini kiriting: ");
             newTeacher.Address = Console.ReadLine();
 
-            teacherService.CreateTeacher(newTeacher);
+            await teacherService.CreateTeacherAsync(newTeacher);
             
             Console.WriteLine($"\n{newTeacher.FirstName} muvaffaqiyatli qo'shildi!");
         }
@@ -151,7 +151,7 @@ do
         Console.ReadKey();
     }
 
-    void Update()
+    async Task Update()
     {
         try
         {
@@ -169,7 +169,7 @@ do
             Console.Write("Adressni kiriting: ");
             teacher.Address = Console.ReadLine();
 
-            var isupdated = teacherService.UpdateTeacher(teacher);
+            var isupdated = await teacherService.UpdateTeacherAsync(teacher);
             if (isupdated)
             {
                 Console.WriteLine($"\n{teacher.FirstName} muvaffaqiyatli yangilandi!");
@@ -188,7 +188,7 @@ do
         Console.ReadKey();
     }
 
-    void Delete()
+    async Task Delete()
     {
         try
         {
@@ -196,7 +196,7 @@ do
 
             Guid teacherId = Guid.Parse(Console.ReadLine());
 
-            var isdeleted = teacherService.DeleteTeacherById(teacherId);
+            var isdeleted = await teacherService.DeleteTeacherByIdAsync(teacherId);
             if (isdeleted)
             {
                 Console.WriteLine($"\n{teacherId} muvaffaqiyatli o'chirildi!");
@@ -214,14 +214,14 @@ do
         Console.ReadKey();
     }
 
-    void Name()
+    async Task Name()
     {
         try
         {
             Console.Write("Ustozni ismini kiriting: ");
 
             string teacherFirstname = Console.ReadLine();
-            var teachers = teacherService.GetTeacherByName(teacherFirstname);
+            var teachers = await teacherService.GetTeacherByNameAsync(teacherFirstname);
 
             foreach(var teacher in teachers)
             {
@@ -239,11 +239,11 @@ do
         Console.ReadKey();
     }
 
-    void Count()
+    async Task Count()
     {
         try
         {
-            int count = teacherService.GetTeachersCount();
+            int count = await teacherService.GetTeachersCountAsync();
             Console.WriteLine($"Ustozlar soni: {count}");
         }
         catch (ValidationException exception) { ShowError(exception.Message); }
@@ -254,7 +254,7 @@ do
         Console.ReadKey();
     }
 
-    void AddRange()
+    async Task AddRange()
     {
         try
         {
@@ -282,7 +282,7 @@ do
                     Address = "Toshkent"
                 }
             ];
-            teacherService.AddTeacherRange(teachers);
+            await teacherService.AddTeacherRangeAsync(teachers);
 
             Console.WriteLine("Ustozlar ma'lumotlari muvaffaqiyatli qo'shildi");
         }
@@ -294,7 +294,7 @@ do
         Console.ReadKey();
     }
 
-    void Paginated()
+    async Task Paginated()
     {
         try
         {
@@ -304,7 +304,7 @@ do
             Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
             int pageSize = Convert.ToInt32(Console.ReadLine());
             
-            var teachers = teacherService.GetPaginatedTeachers(page, pageSize);
+            var teachers = await teacherService.GetPaginatedTeachersAsync(page, pageSize);
 
             foreach(var teacher in teachers)
             {
@@ -322,11 +322,11 @@ do
         Console.ReadKey();
     }
 
-    void Slist()
+    async Task Slist()
     {
         try
         {
-            IEnumerable<Student> students = studentService.GetAllStudents();
+            IEnumerable<Student> students = await studentService.GetAllStudentsAsync();
             
             Console.WriteLine("\n*** Barcha O'quvchilar Ro'yxati ***");
             foreach (var student in students)
@@ -342,7 +342,7 @@ do
         Console.ReadKey();
     }
 
-    void Snew()
+    async void Snew()
     {
         try
         {
@@ -359,7 +359,7 @@ do
             Console.Write("Manzilini kiriting: ");
             newStudent.Address = Console.ReadLine();
 
-            studentService.CreateStudent(newStudent);
+            await studentService.CreateStudentAsync(newStudent);
             
             Console.WriteLine($"\n{newStudent.FirstName} muvaffaqiyatli qo'shildi!");
         }
@@ -371,7 +371,7 @@ do
         Console.ReadKey();
     }
 
-    void Supdate()
+    async Task Supdate()
     {
         try
         {
@@ -389,7 +389,7 @@ do
             Console.Write("Adressni kiriting: ");
             student.Address = Console.ReadLine();
 
-            var isupdated = studentService.UpdateStudent(student);
+            var isupdated = await studentService.UpdateStudentAsync(student);
             if (isupdated)
             {
                 Console.WriteLine($"\n{student.FirstName} muvaffaqiyatli yangilandi!");
@@ -407,14 +407,14 @@ do
         Console.ReadKey();
     }
 
-    void Sdelete()
+    async void Sdelete()
     {
         try
         {
             Console.Write("Id ni kiriting: ");
             Guid studentId = Guid.Parse(Console.ReadLine());
 
-            var isdeleted = studentService.DeleteStudentById(studentId);
+            var isdeleted = await studentService.DeleteStudentByIdAsync(studentId);
             if (isdeleted)
             {
                 Console.WriteLine($"\n{studentId} muvaffaqiyatli o'chirildi!");
@@ -432,14 +432,14 @@ do
         Console.ReadKey();
     }
 
-    void Sname()
+    async Task Sname()
     {
         try
         {
             Console.Write("O'quvchi ismini kiriting: ");
 
             string studentFirstname = Console.ReadLine();
-            var students = studentService.GetStudentByName(studentFirstname);
+            var students = await studentService.GetStudentByNameAsync(studentFirstname);
 
             foreach(var student in students)
             {
@@ -457,11 +457,11 @@ do
         Console.ReadKey();
     }
 
-    void Scount()
+    async Task Scount()
     {
         try
         {
-            int count = studentService.GetStudentsCount();
+            int count = await studentService.GetStudentsCountAsync();
             Console.WriteLine($"Studentlar soni: {count}");
         }
         catch (ValidationException exception) { ShowError(exception.Message); }
@@ -472,7 +472,7 @@ do
         Console.ReadKey();
     }
 
-    void SAddRange()
+    async Task SAddRange()
     {
         try
         {
@@ -500,7 +500,7 @@ do
                     Address = "Toshkent"
                 }
             ];
-            studentService.AddStudentRange(students);
+            await studentService.AddStudentRangeAsync(students);
 
             Console.WriteLine("O'quvchilar ma'lumotlari muvaffaqiyatli qo'shildi");
         }
@@ -512,7 +512,7 @@ do
         Console.ReadKey();
     }
 
-    void Spaginated()
+    async Task Spaginated()
     {
         try
         {
@@ -522,7 +522,7 @@ do
             Console.Write("Nechta ma'lumot ko'rmoqchisiz; ");
             int pageSize = Convert.ToInt32(Console.ReadLine());
             
-            var students = studentService.GetPaginatedStudents(page, pageSize);
+            var students = await studentService.GetPaginatedStudentsAsync(page, pageSize);
 
             foreach(var student in students)
             {
@@ -540,11 +540,11 @@ do
         Console.ReadKey();
     }
 
-    void Sclever()
+    async Task Sclever()
     {
         try
         {
-            IEnumerable<Student> allStudents = studentService.GetAllStudents();
+            IEnumerable<Student> allStudents = await studentService.GetAllStudentsAsync();
             var cleverStudent = allStudents.FindFirstOrDefaultCleverStudent();
 
             if (cleverStudent != null)
@@ -564,11 +564,11 @@ do
         Console.ReadKey();
     }
 
-    void Syoungest()
+    async Task Syoungest()
     {
         try
         {
-            IEnumerable<Student> allStudents = studentService.GetAllStudents();
+            IEnumerable<Student> allStudents = await studentService.GetAllStudentsAsync();
             var youngestStudent = allStudents.FindFirstOrDefaultYoungestStudent();
             
             if (youngestStudent != null)

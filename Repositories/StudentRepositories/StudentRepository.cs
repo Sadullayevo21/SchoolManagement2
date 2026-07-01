@@ -1,6 +1,10 @@
-using System.Text.Json;
-using Models.Students;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Models.Students;
 
 namespace SchoolManagement2.Repositories.StudentRepositories;
 
@@ -12,43 +16,49 @@ public class StudentRepository : IStudentRepository
         path = "students.json";
     }
    
-    public void CreateStudent(Student student)
+    public async Task CreateStudentAsync(Student student)
     {
-        
-        List<Student> students = GetAllStudents().ToList();
+        List<Student> students = (await GetAllStudentsAsync()).ToList();
         students.Add(student);
         var data = JsonSerializer.Serialize(students);
-        File.WriteAllText(path, data);
+        await File.WriteAllTextAsync(path, data);
     }
 
-    public void DeleteStudent(Guid studentId)
+    public async Task DeleteStudentAsync(Guid studentId)
     { 
-        var student = GetAllStudents().ToList();
+        var student = (await GetAllStudentsAsync()).ToList();
         var deletestudent = student.FirstOrDefault(eachstudent => eachstudent.Id == studentId);
-        student.Remove(deletestudent);
-        var studentdata = JsonSerializer.Serialize(student);
-        File.WriteAllText(path, studentdata);
+        if (deletestudent != null)
+        {
+            student.Remove(deletestudent);
+            var studentdata = JsonSerializer.Serialize(student);
+            await File.WriteAllTextAsync(path, studentdata);
+        }
     }
 
-    public IEnumerable<Student> GetAllStudents()
+    public async Task<IEnumerable<Student>> GetAllStudentsAsync()
     {
-        var data = File.ReadAllText(path);
-        return JsonSerializer.Deserialize<IEnumerable<Student>>(data);
+        if (!File.Exists(path)) return new List<Student>();
+        var data = await File.ReadAllTextAsync(path);
+        return JsonSerializer.Deserialize<IEnumerable<Student>>(data) ?? new List<Student>();
     }
 
-    public Student GetStudentById(Guid studentId)
+    public async Task<Student?> GetStudentByIdAsync(Guid studentId)
     {
-        var students = GetAllStudents();
+        var students = await GetAllStudentsAsync();
         return students.FirstOrDefault(student => student.Id == studentId);
     }
    
-    public void UpdateStudent(Student student)
+    public async Task UpdateStudentAsync(Student student)
     {
-        var students = GetAllStudents().ToList();
+        var students = (await GetAllStudentsAsync()).ToList();
         var deletedstudent = students.FirstOrDefault(eachstudent => eachstudent.Id == student.Id);
-        students.Remove(deletedstudent);
+        if (deletedstudent != null)
+        {
+            students.Remove(deletedstudent);
+        }
         students.Add(student);
         var data = JsonSerializer.Serialize(students);
-        File.WriteAllText(path, data);
+        await File.WriteAllTextAsync(path, data);
     }
 }

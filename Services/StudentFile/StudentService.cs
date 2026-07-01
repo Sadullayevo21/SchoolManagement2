@@ -3,19 +3,22 @@ using SchoolManagement2.Repositories.StudentRepositories;
 using System.Data.Common;
 using System.Linq;
 using SchoolManagement2.Exeptions; 
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 namespace Services.StudentFile;
 
 public class StudentService : IStudentService
 {
-    IStudentRepository studentRepository;
+    private readonly IStudentRepository _studentRepository;
 
     public StudentService()
     {
-        studentRepository = new StudentRepository();
+        _studentRepository = new StudentRepository();
     }
 
-    public void CreateStudent(Student student)
+    public async Task CreateStudentAsync(Student student)
     {
         if (student is null)
         {
@@ -33,18 +36,20 @@ public class StudentService : IStudentService
         }
 
         student.Id = Guid.NewGuid();
-        var isthere = GetAllStudents().Contains(student);
-        if (isthere)
+        
+        var allStudents = await GetAllStudentsAsync();
+        var isThere = allStudents.Contains(student);
+        if (isThere)
         {
             student.Id = Guid.NewGuid();
         }
 
-        studentRepository.CreateStudent(student);
+        await _studentRepository.CreateStudentAsync(student);
     }
 
-    public IEnumerable<Student> GetAllStudents()
+    public async Task<IEnumerable<Student>> GetAllStudentsAsync()
     {
-        return studentRepository.GetAllStudents();
+        return await _studentRepository.GetAllStudentsAsync();
     }
 
     public void PrintStudent(Student student)
@@ -65,22 +70,21 @@ public class StudentService : IStudentService
         );
     }
 
-    public bool DeleteStudentById(Guid studentId)
+    public async Task<bool> DeleteStudentByIdAsync(Guid studentId)
     {
-        var student = studentRepository.GetStudentById(studentId);
+        var student = await _studentRepository.GetStudentByIdAsync(studentId);
         if (student is null)
         {
             throw new NotFoundException("Student is not found with the given ID.");
         }
         
-        studentRepository.DeleteStudent(studentId);
-
+        await _studentRepository.DeleteStudentAsync(studentId);
         return true;
     }
 
-    public Student GetStudentById(Guid studentId)
+    public async Task<Student> GetStudentByIdAsync(Guid studentId)
     {
-        var student = studentRepository.GetStudentById(studentId);
+        var student = await _studentRepository.GetStudentByIdAsync(studentId);
         if (student is null)
         {
             throw new NotFoundException("Student is not found.");
@@ -89,55 +93,54 @@ public class StudentService : IStudentService
         return student;
     }
 
-    public bool UpdateStudent(Student student)
+    public async Task<bool> UpdateStudentAsync(Student student)
     {
         if (student is null)
         {
             throw new ValidationException("Student updates cannot be null.");
         }
 
-        var updatedstudent = studentRepository.GetStudentById(student.Id);
-        if (updatedstudent is null)
+        var updatedStudent = await _studentRepository.GetStudentByIdAsync(student.Id);
+        if (updatedStudent is null)
         {
             throw new NotFoundException("Student to update is not found.");
         }
 
-        studentRepository.UpdateStudent(student);
-
+        await _studentRepository.UpdateStudentAsync(student);
         return true;
     }
 
-    public IEnumerable<Student> GetStudentByName(string name)
+    public async Task<IEnumerable<Student>> GetStudentByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ValidationException("Search name cannot be empty.");
         }
 
-        var students = GetAllStudents();
+        var students = await GetAllStudentsAsync();
         return students.Where(student => student.FirstName == name);
     }
 
-    public int GetStudentsCount()
+    public async Task<int> GetStudentsCountAsync()
     {
-        var students = GetAllStudents();
+        var students = await GetAllStudentsAsync();
         return students.Count();
     }
 
-    public void AddStudentRange(params Student[] students)
+    public async Task AddStudentRangeAsync(params Student[] students)
     {
         if (students is null || students.Length == 0)
         {
             throw new ValidationException("Student list cannot be empty.");
         }
 
-        foreach(var student in students)
+        foreach (var student in students)
         {
-            CreateStudent(student);
+            await CreateStudentAsync(student);
         }
     }
 
-    public IEnumerable<Student> GetPaginatedStudents(int page, int pageSize)
+    public async Task<IEnumerable<Student>> GetPaginatedStudentsAsync(int page, int pageSize)
     {
         if (page <= 0)
         {
@@ -149,7 +152,7 @@ public class StudentService : IStudentService
             throw new ValidationException("Page size must be greater than zero.");
         }
 
-        var students = GetAllStudents();
+        var students = await GetAllStudentsAsync();
         return students.Skip((page - 1) * pageSize).Take(pageSize);
     }
 }

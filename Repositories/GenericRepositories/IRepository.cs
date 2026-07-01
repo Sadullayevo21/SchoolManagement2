@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace SchoolManagement2.Repositories.GenericRepositories;
 
 public interface IRepository<T> where T : class
 {
-    void Create(T entity);
-    IEnumerable<T> GetAll();
-    T GetById(Guid id);
-    void Update(T entity);
-    void Delete(Guid id);
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T> GetByIdAsync(Guid id);
+    Task CreateAsync(T entity);
+    Task UpdateAsync(T entity);
+    Task DeleteAsync(Guid id);
 }

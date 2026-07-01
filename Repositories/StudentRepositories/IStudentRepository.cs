@@ -1,12 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models.Students;
 
 namespace SchoolManagement2.Repositories.StudentRepositories;
 
 public interface IStudentRepository
 {
-    void CreateStudent(Student student);
-    IEnumerable<Student> GetAllStudents();
-    Student GetStudentById(Guid studentId);
-    void UpdateStudent(Student student);
-    void DeleteStudent(Guid studentId);
+    Task CreateStudentAsync(Student student);
+    Task<IEnumerable<Student>> GetAllStudentsAsync();
+    Task<Student> GetStudentByIdAsync(Guid studentId);
+    Task UpdateStudentAsync(Student student);
+    Task DeleteStudentAsync(Guid studentId);
 }

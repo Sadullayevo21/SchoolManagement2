@@ -1,17 +1,20 @@
 using Models.Students;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Services.StudentFile;
 
 public interface IStudentService
 {
-    void CreateStudent(Student student);
-    IEnumerable<Student> GetAllStudents();
+    Task CreateStudentAsync(Student student);
+    Task<IEnumerable<Student>> GetAllStudentsAsync();
     void PrintStudent(Student student);
-    Student GetStudentById(Guid studentId);
-    bool UpdateStudent(Student student);
-    bool DeleteStudentById(Guid studentId);
-    IEnumerable<Student> GetStudentByName(string name);
-    int GetStudentsCount();
-    void AddStudentRange(params Student[] students);
-    IEnumerable<Student> GetPaginatedStudents(int page, int pageSize);
+    Task<Student> GetStudentByIdAsync(Guid studentId);
+    Task<bool> UpdateStudentAsync(Student student);
+    Task<bool> DeleteStudentByIdAsync(Guid studentId);
+    Task<IEnumerable<Student>> GetStudentByNameAsync(string name);
+    Task<int> GetStudentsCountAsync();
+    Task AddStudentRangeAsync(params Student[] students);
+    Task<IEnumerable<Student>> GetPaginatedStudentsAsync(int page, int pageSize);
 }

@@ -2,6 +2,9 @@ using Models.Teachers;
 using SchoolManagement2.Repositories.GenericRepositories;
 using System.Linq;
 using SchoolManagement2.Exeptions;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 namespace Services.TeacherFile;
 
@@ -14,7 +17,7 @@ public class TeacherService : ITeacherService
         teacherRepository = new Repository<Teacher>("teachers.json");
     }
 
-    public void CreateTeacher(Teacher teacher)
+    public async Task CreateTeacherAsync(Teacher teacher)
     {
         if (teacher is null)
         {
@@ -32,18 +35,19 @@ public class TeacherService : ITeacherService
         }
 
         teacher.Id = Guid.NewGuid();
-        var isthere = GetAllTeachers().Contains(teacher);
+        var teachers = await GetAllTeachersAsync();
+        var isthere = teachers.Contains(teacher);
         if (isthere)
         {
             teacher.Id = Guid.NewGuid();
         }
 
-        teacherRepository.Create(teacher);
+        await teacherRepository.CreateAsync(teacher);
     }
 
-    public IEnumerable<Teacher> GetAllTeachers()
+    public async Task<IEnumerable<Teacher>> GetAllTeachersAsync()
     {
-        return teacherRepository.GetAll();
+        return await teacherRepository.GetAllAsync();
     }
 
     public void PrintTeacher(Teacher teacher)
@@ -64,22 +68,22 @@ public class TeacherService : ITeacherService
         );
     }
 
-    public bool DeleteTeacherById(Guid teacherId)
+    public async Task<bool> DeleteTeacherByIdAsync(Guid teacherId)
     {
-        var teacher = teacherRepository.GetById(teacherId);
+        var teacher = await teacherRepository.GetByIdAsync(teacherId);
         if (teacher is null)
         {
             throw new NotFoundException("Teacher is not found with the given ID.");
         }
         
-        teacherRepository.Delete(teacherId);
+        await teacherRepository.DeleteAsync(teacherId);
 
         return true;
     }
 
-    public Teacher GetTeacherById(Guid teacherId)
+    public async Task<Teacher> GetTeacherByIdAsync(Guid teacherId)
     {
-        var teacher = teacherRepository.GetById(teacherId);
+        var teacher = await teacherRepository.GetByIdAsync(teacherId);
         if (teacher is null)
         {
             throw new NotFoundException("Teacher is not found.");
@@ -88,42 +92,42 @@ public class TeacherService : ITeacherService
         return teacher;
     }
 
-    public bool UpdateTeacher(Teacher teacher)
+    public async Task<bool> UpdateTeacherAsync(Teacher teacher)
     {
         if (teacher is null)
         {
             throw new ValidationException("Teacher updates cannot be null.");
         }
 
-        var updatedteacher = teacherRepository.GetById(teacher.Id);
+        var updatedteacher = await teacherRepository.GetByIdAsync(teacher.Id);
         if (updatedteacher is null)
         {
             throw new NotFoundException("Teacher to update is not found.");
         }
 
-        teacherRepository.Update(teacher);
+        await teacherRepository.UpdateAsync(teacher);
 
         return true;
     }
 
-    public IEnumerable<Teacher> GetTeacherByName(string name)
+    public async Task<IEnumerable<Teacher>> GetTeacherByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             throw new ValidationException("Search name cannot be empty.");
         }
 
-        var teachers = GetAllTeachers();
+        var teachers = await GetAllTeachersAsync();
         return teachers.Where(teacher => teacher.FirstName == name);
     }
 
-    public int GetTeachersCount()
+    public async Task<int> GetTeachersCountAsync()
     {
-        var teachers = GetAllTeachers();
+        var teachers = await GetAllTeachersAsync();
         return teachers.Count();
     }
 
-    public void AddTeacherRange(params Teacher[] teachers)
+    public async Task AddTeacherRangeAsync(params Teacher[] teachers)
     {
         if (teachers is null || teachers.Length == 0)
         {
@@ -132,11 +136,11 @@ public class TeacherService : ITeacherService
 
         foreach (var teacher in teachers)
         {
-            CreateTeacher(teacher);
+            await CreateTeacherAsync(teacher);
         }
     }
 
-    public IEnumerable<Teacher> GetPaginatedTeachers(int page, int pageSize)
+    public async Task<IEnumerable<Teacher>> GetPaginatedTeachersAsync(int page, int pageSize)
     {
         if (page <= 0)
         {
@@ -148,7 +152,7 @@ public class TeacherService : ITeacherService
             throw new ValidationException("Page size must be greater than zero.");
         }
 
-        var teachers = GetAllTeachers();
+        var teachers = await GetAllTeachersAsync();
         return teachers.Skip((page - 1) * pageSize).Take(pageSize);
     }
 }
